@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profile.</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="darkmode.javascript">
+</head>
+
+<body class=>
+<header class="navbar">
+  <h1 class="logo">Hi<span>.</span></h1>
+
+  <nav class="navbar">
+  <div style="display: flex; align-items: center;">
+    <a href="#home" class="nav-link active">Home</a>
+    <a href="#about" class="nav-link">About</a>
+    <a href="#contact" class="nav-link">Contact</a>
+    <div class="theme-switch-wrapper">
+      <label class="theme-switch">
+        <input type="checkbox" id="checkbox">
+        <div class="slider"></div>
+      </label>
+    </div>
+  </div>
+</nav>
+
+</header>
+
+<section class="hero" id="home">
+  <div class="hero-text">
+    <p class="intro">Hello, I am</p>
+    <h2 class="name">Francis Alkier</h2>
+    <h3 class="title">Full Stack Kupal.</h3>
+    <p class="description">
+    
+    </p>
+
+    <div class="socials">
+      <a href="https://www.facebook.com/share/19L7Qf7xzh/" target="_blank"><img src="FB.jpg" alt="Facebook" class="social-icon"></a>
+      <a href="https://www.instagram.com/kieromantiko?stkn=dWh1N3dtbW40dHZn" target="_blank"><img src="IG.png" alt="Instagram" class="social-icon"></a>
+    </div>
+  </div>
+
+  <div class="hero-image">
+    <div class="image-ring">
+      <img src="profile.jpg" alt="Profile">
+    </div>
+  </div>
+</section> 
+<section class="page" id="about">
+  <h2>About Me</h2>
+  <p>
+    WALA, TULOG, UMALIS
+  </p>
+</section>
+
+
+<section id="contact">
+  <h2>Contact Me</h2>
+  <p>Facebook: <a href="https://www.facebook.com/share/19L7Qf7xzh/" target="_blank" style="color:#ff0000;">@kieromantiko</a></p>
+  <p>Instagram: <a href="https://www.instagram.com/kieromantiko/?__pwa=1" target="_blank" style="color:#ff0000;">@Kieromantiko</a></p>
+</section>
+<canvas id="smoke-canvas"></canvas>
+<script>
+const sections = document.querySelectorAll("section");
+const navLinks = document.querySelectorAll(".nav-link");
+
+window.addEventListener("scroll", () => {
+  let current = "";
+
+  sections.forEach(section => {
+    const sectionTop = section.offsetTop;
+    const sectionHeight = section.offsetHeight;
+
+    if (window.scrollY >= (sectionTop - 200)) {
+      current = section.getAttribute("id");
+    }
+  });
+
+  navLinks.forEach(link => {
+    link.classList.remove("active");
+    if (link.getAttribute("href") === "#" + current) {
+      link.classList.add("active");
+    }
+  });
+});
+
+const checkbox = document.getElementById('checkbox');
+
+checkbox.addEventListener('change', () => {
+  document.body.classList.toggle('light-mode');
+  
+  if (document.body.classList.contains('light-mode')) {
+    localStorage.setItem('theme', 'light');
+  } else {
+    localStorage.setItem('theme', 'dark');
+  }
+});
+
+const currentTheme = localStorage.getItem('theme');
+if (currentTheme === 'light') {
+  document.body.classList.add('light-mode');
+  checkbox.checked = true;
+}
+
+const canvas = document.getElementById('smoke-canvas');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+window.addEventListener('resize', () => {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+});
+
+let particles = [];
+
+function spawnParticles(x, y) {
+  for (let i = 0; i < 3; i++) {
+    particles.push({
+      x: x,
+      y: y,
+      size: Math.random() * 20 + 10,
+      speedX: (Math.random() - 0.5) * 1.5,
+      speedY: (Math.random() - 0.5) * 1.5 - 0.5,
+      life: 1
+    });
+  }
+}
+
+// Desktop - mouse move
+window.addEventListener('mousemove', (e) => {
+  spawnParticles(e.clientX, e.clientY);
+});
+
+// Mobile/CP - touch move
+window.addEventListener('touchmove', (e) => {
+  const touch = e.touches[0];
+  spawnParticles(touch.clientX, touch.clientY);
+});
+
+// Scroll - spawn sa random na lugar habang nag-scroll
+let lastScrollY = window.scrollY;
+window.addEventListener('scroll', () => {
+  const scrollDiff = Math.abs(window.scrollY - lastScrollY);
+  const numParticles = Math.min(Math.floor(scrollDiff / 5), 10);
+
+  for (let i = 0; i < numParticles; i++) {
+    const randomX = Math.random() * canvas.width;
+    const randomY = Math.random() * canvas.height;
+    spawnParticles(randomX, randomY);
+  }
+
+  lastScrollY = window.scrollY;
+});
+
+function animate() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  particles.forEach((p, index) => {
+    p.x += p.speedX;
+    p.y += p.speedY;
+    p.size *= 0.96;
+    p.life -= 0.02;
+
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(255, 0, 0, ${p.life * 0.5})`;
+    ctx.filter = 'blur(8px)';
+    ctx.fill();
+
+    if (p.life <= 0 || p.size < 0.5) {
+      particles.splice(index, 1);
+    }
+  });
+
+  requestAnimationFrame(animate);
+}
+
+animate();
+</script>
+
+</body>
+</html>
+
