@@ -118,7 +118,7 @@ window.addEventListener('resize', () => {
 let particles = [];
 
 function spawnParticles(x, y) {
-  for (let i = 0; i < 1; i++) {
+  for (let i = 0; i < 3; i++) {
     particles.push({
       x: x,
       y: y,
@@ -133,11 +133,6 @@ function spawnParticles(x, y) {
 window.addEventListener('mousemove', (e) => {
   spawnParticles(e.clientX, e.clientY);
 });
-
-window.addEventListener('touchmove', (e) => {
-  const touch = e.touches[0];
-  spawnParticles(touch.clientX, touch.clientY);
-}, { passive: true });
 
 function animate() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -164,8 +159,7 @@ function animate() {
 
 animate();
 </script>
-</body>
-</html>
+
 </body>
 </html>
 
